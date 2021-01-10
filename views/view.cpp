@@ -12,7 +12,16 @@ int main(){
 
   addUser(users, newUser("Chiko"));
   addRecipe(recipes, newRecipe("Ayam Goreng", "Ayam goreng kesukaan ipin"));
+  addIngredient(recipes->ingredients, newIngredient("Ayam", 1, 2));
+  addIngredient(recipes->ingredients, newIngredient("Minyak", 5, 5));
+  addInstruction(recipes->instructions, newInstruction("Siapkan alat alat yang ada"));
+  addInstruction(recipes->instructions, newInstruction("Taruh minyak secukupnya dalam wajan"));
+  addInstruction(recipes->instructions, newInstruction("Goreng ayamnya"));
   addRecipe(recipes, newRecipe("Nasi Goreng", "Nasi goreng top buatan uncle mutu"));
+  addIngredient(recipes->ingredients, newIngredient("Nasi", 10, 1));
+  addIngredient(recipes->ingredients, newIngredient("Minyak", 5, 5));
+  addInstruction(recipes->instructions, newInstruction("Siapin nasi 1 mangkok"));
+  addInstruction(recipes->instructions, newInstruction("Goreng dah nasinya gampang kan"));
 
   // Main Screen
   bool inMenu = true;
@@ -36,6 +45,7 @@ int main(){
           printCookBook(users, recipes);
           break;
         case 3:
+          kitchenMenu(users, recipes);
           break;
         case 4:
           break;
@@ -45,6 +55,7 @@ int main(){
           inMenu = false;
           break;
       }
+      fflush(stdin);
     }
   }
   CLEAR;

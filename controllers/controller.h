@@ -50,17 +50,19 @@ void addUser(User *&users, User *user) {
 void addInstruction(Instruction *&instruction, Instruction *newInstruction) {
   if(!instruction) instruction = newInstruction;
   else {
-    instruction->prev = newInstruction;
-    newInstruction->next = instruction;
-    instruction = newInstruction;
+    Instruction *temp = instruction;
+    while(temp->next) temp = temp->next;
+    temp->next = newInstruction;
+    newInstruction->prev = temp;
   }
 }
 void addIngredient(Ingredient *&ingredient, Ingredient *newIngredient) {
   if(!ingredient) ingredient = newIngredient;
   else {
-    ingredient->prev = newIngredient;
-    newIngredient->next = ingredient;
-    ingredient = newIngredient;
+    Ingredient *temp = ingredient;
+    while(temp->next) temp = temp->next;
+    temp->next = newIngredient;
+    newIngredient->prev = temp;
   }
 }
 void addRecipe(Recipe *&recipes, Recipe *newRecipe) {
@@ -79,7 +81,9 @@ void printInstruction(Instruction *instruction) {
     int idx = 1;
     Instruction *temp = instruction;
     while(temp) {
-      printf("%02d. %s\n", idx++, temp->desc);
+      int input = -1;
+      printf("Step #%02d:\n", idx++);
+      printf("%s\n", temp->desc);
       temp = temp->next;
     }
   }
@@ -91,12 +95,14 @@ void printIngredient(Ingredient *ingredient) {
   } else {
     int idx = 1;
     Ingredient *temp = ingredient;
+    printf("No. %-20s|qty|exp\n", "Nama Bahan");
     while(temp) {
-      printf("%02d. %-25s|%02d|%02d day\n", idx++, temp->name, temp->qty, temp->exp);
+      printf("%02d. %-20s|%03d|%02d day\n", idx++, temp->name, temp->qty, temp->exp);
       temp = temp->next;
     }
   }
 }
+// print a recipe
 void printRecipe(Recipe *recipe) {
   if(!recipe) return;
   else {
@@ -108,6 +114,7 @@ void printRecipe(Recipe *recipe) {
     printInstruction(recipe->instructions);
   }
 }
+// print availale recipes
 void printSearch(Recipe *recipe) {
   CLEAR;
   if(!recipe) {
@@ -140,6 +147,7 @@ void printSearch(Recipe *recipe) {
     }
   }
 }
+// print available recipes
 void printAllRecipe(Recipe *recipe) {
   if(!recipe) {
     CLEAR;
@@ -164,6 +172,7 @@ void printAllRecipe(Recipe *recipe) {
   }
   fflush(stdin);
 }
+// select a recipe from recipe list
 Recipe *selectRecipe(Recipe *recipe) {
   if(!recipe) {
     CLEAR;
@@ -197,6 +206,7 @@ Recipe *selectRecipe(Recipe *recipe) {
   }
   return NULL;
 }
+// delete recipe from recipe list
 void deleteRecipe(User *&user, Recipe *deletedRecipe) {
   if(!user->savedRecipes->next) { 
     if(strcmp(user->savedRecipes->name, deletedRecipe->name) == 0) {
@@ -235,6 +245,7 @@ void deleteRecipe(User *&user, Recipe *deletedRecipe) {
     }
   }
 }
+// check if user saved recipe exist
 bool checkUserRecipe(User *user, Recipe *recipe) {
   Recipe *temp = user->savedRecipes;
   while(temp) {
