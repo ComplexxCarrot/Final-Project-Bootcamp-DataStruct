@@ -1,0 +1,245 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <conio.h>
+#include "../models/model.h"
+#define RIGHT 77
+#define LEFT 75
+#define EXIT 27
+#define ENTER 13
+#define CLEAR system("cls || clear")
+
+Instruction *newInstruction(const char *desc) {
+  Instruction *temp = (Instruction*)malloc(sizeof(Instruction));
+  strcpy(temp->desc, desc);
+  temp->prev = temp->next = NULL;
+  return temp;
+}
+Ingredient *newIngredient(const char *name, int qty, int exp) {
+  Ingredient *temp = (Ingredient*)malloc(sizeof(Ingredient));
+  strcpy(temp->name, name);
+  temp->qty = qty;
+  temp->exp = exp;
+  temp->prev = temp->next = NULL;
+  return temp;
+}
+Recipe *newRecipe(const char *name, const char *desc) {
+  Recipe *temp = (Recipe*)malloc(sizeof(Recipe));
+  strcpy(temp->name, name);
+  strcpy(temp->desc, desc);
+  temp->instructions = NULL;
+  temp->ingredients = NULL;
+  temp->prev = temp->next = NULL;
+  return temp;
+}
+User *newUser(const char *name) {
+  User *temp = (User*)malloc(sizeof(User));
+  strcpy(temp->name, name);
+  temp->savedRecipes = NULL;
+  temp->prev = temp->next = NULL;
+  return temp;
+}
+void addUser(User *&users, User *user) {
+  if(!users) users = user;
+  else {
+    user->next = users;
+    users->prev = user;
+    users = user;
+  }
+}
+void addInstruction(Instruction *&instruction, Instruction *newInstruction) {
+  if(!instruction) instruction = newInstruction;
+  else {
+    instruction->prev = newInstruction;
+    newInstruction->next = instruction;
+    instruction = newInstruction;
+  }
+}
+void addIngredient(Ingredient *&ingredient, Ingredient *newIngredient) {
+  if(!ingredient) ingredient = newIngredient;
+  else {
+    ingredient->prev = newIngredient;
+    newIngredient->next = ingredient;
+    ingredient = newIngredient;
+  }
+}
+void addRecipe(Recipe *&recipes, Recipe *newRecipe) {
+  if(!recipes) recipes = newRecipe;
+  else {
+    newRecipe->next = recipes;
+    recipes->prev = newRecipe;
+    recipes = newRecipe;
+  }
+}
+void printInstruction(Instruction *instruction) {
+  if(!instruction) {
+    puts("No instructions added!");
+    return;
+  } else {
+    int idx = 1;
+    Instruction *temp = instruction;
+    while(temp) {
+      printf("%02d. %s\n", idx++, temp->desc);
+      temp = temp->next;
+    }
+  }
+}
+void printIngredient(Ingredient *ingredient) {
+  if(!ingredient) {
+    puts("No ingredients added!");
+    return;
+  } else {
+    int idx = 1;
+    Ingredient *temp = ingredient;
+    while(temp) {
+      printf("%02d. %-25s|%02d|%02d day\n", idx++, temp->name, temp->qty, temp->exp);
+      temp = temp->next;
+    }
+  }
+}
+void printRecipe(Recipe *recipe) {
+  if(!recipe) return;
+  else {
+    printf("Name:\n%s\n", recipe->name);
+    printf("Desc:\n%s\n", recipe->desc);
+    puts("Ingredient:");
+    printIngredient(recipe->ingredients);
+    puts("Instructions:");
+    printInstruction(recipe->instructions);
+  }
+}
+void printSearch(Recipe *recipe) {
+  CLEAR;
+  if(!recipe) {
+    puts(" === Search ===");
+    puts("There is no recipe on data, please add some!"); getchar();
+    return;
+  } else {
+    Recipe *temp = recipe;
+    char name[255];
+    puts(" === Search ===");
+    puts("type 0 to return");
+    printf(">> "); scanf("%[^\n]", name); getchar();
+    if(name[0] == '0') return;
+    else {
+      bool found = false;
+      while(temp) {
+        if(strcmp(temp->name, name) == 0) {
+          CLEAR;
+          printRecipe(temp);
+          puts("Press enter to continue..."); getchar();
+          found = true;
+          break;
+        }
+        temp = temp->next;
+      }
+      if(!found) {
+        CLEAR;
+        puts("The recipe is not exist!\nplease make sure you type exactly the same name of the recipe.\nPress enter to continue..."); getchar();
+      }
+    }
+  }
+}
+void printAllRecipe(Recipe *recipe) {
+  if(!recipe) {
+    CLEAR;
+    puts(" === Recipes ===");
+    puts("There is no recipe on data, please add some!"); getchar();
+    return;
+  } else {
+    Recipe *temp = recipe;
+    char keyPress = 0;
+    while(keyPress != 27) {
+      keyPress = 0;
+      do {
+        CLEAR;
+        puts(" === Recipes ===");
+        printRecipe(temp);
+        printf("\n   [<] = prev   [>] = next   [Esc] = Back\n");
+        keyPress = getch();
+        if(keyPress == LEFT && temp->prev) temp = temp->prev; 
+        else if(keyPress == RIGHT && temp->next) temp = temp->next; 
+      } while(keyPress == 75 || keyPress == 77);
+    }
+  }
+  fflush(stdin);
+}
+Recipe *selectRecipe(Recipe *recipe) {
+  if(!recipe) {
+    CLEAR;
+    puts(" === Recipes ===");
+    puts("There is no recipe on data, please add some!"); getchar();
+  } else {
+    Recipe *temp = recipe;
+    char keyPress = 0;
+    while(keyPress != EXIT) {
+      keyPress = 0;
+      do {
+        CLEAR;
+        puts(" === Recipes ===");
+        printRecipe(temp);
+        printf("\n   [<] = prev   [>] = next   [Esc] = Back  [Enter] = Confirm\n");
+        keyPress = getch();
+        if(keyPress == LEFT && temp->prev) {
+          temp = temp->prev;
+        } else if(keyPress == RIGHT && temp->next) {
+          temp = temp->next; 
+        } 
+      } while(keyPress == LEFT || keyPress == RIGHT);
+      if(keyPress == ENTER) {
+        keyPress = EXIT;
+        Recipe *savedRecipe = newRecipe(temp->name, temp->desc);
+        savedRecipe->ingredients = temp->ingredients;
+        savedRecipe->instructions = temp->instructions;
+        return savedRecipe;
+      }
+    }
+  }
+  return NULL;
+}
+void deleteRecipe(User *&user, Recipe *deletedRecipe) {
+  if(!user->savedRecipes->next) { 
+    if(strcmp(user->savedRecipes->name, deletedRecipe->name) == 0) {
+    user->savedRecipes = NULL;
+    free(user->savedRecipes);
+    }
+  }
+  else {
+    bool isFound = false;
+    Recipe *tempRecipe = user->savedRecipes;
+    while(tempRecipe)  {
+      if(strcmp(tempRecipe->name, deletedRecipe->name) == 0) {
+        isFound = true;
+        break;
+      }
+      tempRecipe = tempRecipe->next;
+    }
+    if(isFound) {
+      if(!tempRecipe->next) {
+        Recipe *temp = tempRecipe->prev;
+        temp->next = tempRecipe->prev = NULL;
+        free(tempRecipe);
+        tempRecipe = temp;
+      } else if(!tempRecipe->prev) {
+        if(strcmp(user->savedRecipes->name, deletedRecipe->name) == 0) {
+          user->savedRecipes = NULL;
+          free(user->savedRecipes);
+        }
+      } else {
+        tempRecipe->next = deletedRecipe;
+        deletedRecipe->next->prev = tempRecipe;
+        deletedRecipe->prev =  deletedRecipe->next = NULL;
+        free(deletedRecipe);
+        deletedRecipe = NULL;
+      }
+    }
+  }
+}
+bool checkUserRecipe(User *user, Recipe *recipe) {
+  Recipe *temp = user->savedRecipes;
+  while(temp) {
+    if(strcmp(temp->name, recipe->name) == 0) return false;
+    temp = temp->next;
+  }
+  return true;
+}
