@@ -106,7 +106,7 @@ void kitchenMenu(User *user, Recipe *recipes){
         puts("The food you want to cook isn't registered :(");
       }else{
         puts("Okay, 1st lets prepare the ingredients!");
-        puts("To cook %s you will need:", temprecipe);
+        printf("To cook %s you will need:", temprecipe);
         printIngredientofFood(temprecipe, recipes);//ngeloop ingredient yg dibutuhkan untuk makanan tsb
         puts("");
         int continuebutton = 0;
@@ -115,7 +115,7 @@ void kitchenMenu(User *user, Recipe *recipes){
          scanf("%d", &continuebutton); 
         }
         if (continuebutton == 1){
-          puts("Okay here, are the steps in making %s:", temprecipe);
+          printf("Okay here, are the steps in making %s:", temprecipe);
           puts("GoodLuck!");
           printInstructionofFood(temprecipe, recip);//ngeloop pake getchar() instruksi u/ makanan tsb
           puts("Amazing, thats all the steps done!");
