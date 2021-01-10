@@ -81,3 +81,56 @@ void printCookBook(User *user, Recipe *recipes) {
   }
   fflush(stdin);
 } 
+
+//Menu for Kitchen
+void kitchenMenu(User *user, Recipe *recipes){
+  bool inMenu = true;
+  while (inMenu){
+    CLEAR;
+    puts("Hello Welcome To THe Kitchen!");
+    puts("Enter <<EXIT>> to exit from menu");
+    puts("List of Dishes from Cookbook:");
+    printAllRecipe(user->savedRecipes);
+    puts("");
+    printf("===========================\n");
+    puts("What would you like to cook today?");
+    char temprecipe[255];
+    scanf("%[^\n]", temprecipe);
+    if (strcmp(temprecipe, "EXIT")==0){
+      inMenu = false;
+      return;
+    }else{
+      int x = 0;
+      x = searchFoodExist(temprecipe,user);//if food exits return 1
+      if (x == 0){
+        puts("The food you want to cook isn't registered :(");
+      }else{
+        puts("Okay, 1st lets prepare the ingredients!");
+        puts("To cook %s you will need:", temprecipe);
+        printIngredientofFood(temprecipe, recipes);//ngeloop ingredient yg dibutuhkan untuk makanan tsb
+        puts("");
+        int continuebutton = 0;
+        puts("To continue to instructions enter <<1>>");
+        while (continuebutton != 1){
+         scanf("%d", &continuebutton); 
+        }
+        if (continuebutton == 1){
+          puts("Okay here, are the steps in making %s:", temprecipe);
+          puts("GoodLuck!");
+          printInstructionofFood(temprecipe, recip);//ngeloop pake getchar() instruksi u/ makanan tsb
+          puts("Amazing, thats all the steps done!");
+          puts("I'm hoping the food is delicious!");
+          puts("Enter <<1>> to exit from kitchen:");
+          int exitbutton = 0;
+          while (exitbutton!= 1){
+            scanf("%d", &exitbutton);
+          }
+          if (exitbutton == 1){
+            inMenu = false;
+            return;
+          }
+        }
+      }
+    }
+  }
+}
