@@ -117,7 +117,7 @@ void kitchenMenu(User *user, Recipe *recipes){
         if (continuebutton == 1){
           printf("Okay here, are the steps in making %s:", temprecipe);
           puts("GoodLuck!");
-          printInstructionofFood(temprecipe, recip);//ngeloop pake getchar() instruksi u/ makanan tsb
+          printInstructionofFood(temprecipe, recipe);//ngeloop pake getchar() instruksi u/ makanan tsb
           puts("Amazing, thats all the steps done!");
           puts("I'm hoping the food is delicious!");
           puts("Enter <<1>> to exit from kitchen:");
