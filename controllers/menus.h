@@ -101,7 +101,6 @@ void kitchenMenu(User *user, Recipe *recipes){
       puts("Okay, 1st lets prepare the ingredients!");
       printf("To cook %s you will need:\n", selectedRecipe->name); 
       printIngredient(selectedRecipe->ingredients);
-      // printIngredientofFood(temprecipe, recipes);//ngeloop ingredient yg dibutuhkan untuk makanan tsb
       char continuebutton = 0;
       puts("To continue to instructions press [Enter]\nTo quit press [Esc]");
       while (!(continuebutton == ENTER || continuebutton == EXIT)){
@@ -110,12 +109,20 @@ void kitchenMenu(User *user, Recipe *recipes){
       CLEAR;
       if (continuebutton == ENTER){
         printf("Okay here, are the steps in making %s:\n", selectedRecipe->name);
-        puts("GoodLuck!");
-        printInstruction(selectedRecipe->instructions);
-        // printInstructionofFood(temprecipe, recipes);//ngeloop pake getchar() instruksi u/ makanan tsb
+        puts("GoodLuck!"); getchar();
+        CLEAR;
+        // validasi kalo gaada instruksi
+        if(!selectedRecipe->instructions) {
+          puts("No instructions added to this recipe!");
+          puts("Press enter to exit."); getchar();
+          inMenu = false;
+          break;
+        }
+        printInstructionPerStep(selectedRecipe->instructions);
         puts("Amazing, thats all the steps done!");
         puts("I'm hoping the food is delicious!");
         puts("Press enter to exit from kitchen:"); getchar();
+        inMenu = false;
       }
     }
   }
