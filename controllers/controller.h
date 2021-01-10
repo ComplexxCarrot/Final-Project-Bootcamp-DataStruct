@@ -243,3 +243,57 @@ bool checkUserRecipe(User *user, Recipe *recipe) {
   }
   return true;
 }
+
+
+//Function for Kitchen//
+//Search if Food is within user's cookbook
+int searchFoodExist (const char str[], User *user){
+  Recipe *curr = user->savedRecipes;
+  while (curr){
+    if ( strcmp(curr->name, str)==0){
+      return 1;//ketemu
+    }
+    curr = curr->next;
+  }
+  return -1;//alias g ada di cookbook
+}
+//Looping required Ingredient of food
+void printIngredientofFood(const char str[], Recipe *recipes){
+  Recipe *curr = recipes;
+  while (curr){
+    if (strcmp(curr->name, str)== 0){
+      Ingredient *currin = curr->ingredients;
+      while (currin){
+        printf("%s.......%s\n", currin->name, currin->qty);
+        currin = currin->next;
+      }
+    } 
+    curr = curr->next;
+  }
+}
+//Looping through instructiosn of food with getchar(1);
+void printInstructionofFood(const char str[], Recipe *recipes){
+  Recipe *curr = recipes;
+  while (curr){
+    if (strcmp (curr->name, str)==0){
+      Instruction *currin = curr->instructions;
+      int idx = 1;
+      int nextbutton = 0;
+      while ( currin){
+        printf("Step %d:\n", idx);
+        printf("%s\n", currin->desc);
+        puts("");
+        printf("Enter 1 to go to next step: ");
+        while (nextbutton != 1){
+          scanf("%d", &nextbutton);
+        }
+        if (nextbutton == 1){
+          idx++;
+          puts("");
+        }
+        currin = currin->next;
+      }
+    }
+    curr= curr->next;
+  }
+}
