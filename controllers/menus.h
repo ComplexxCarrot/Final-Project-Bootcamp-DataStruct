@@ -68,6 +68,92 @@ void printCookBook(User *user, Recipe *recipes) {
             }
           }
         break;
+        case 3: 
+        {
+          // name
+          char name[255], desc[255];
+          bool isValid = true;
+          bool Quit = false;
+          do {
+            isValid = true;
+            CLEAR;
+            puts(" === Add Recipe ===");
+            printf("Recipe name [1..25]: ");
+            scanf("%[^\n]", name); getchar();
+
+            if(!(strlen(name) >= 1 && strlen(name) <= 25)) isValid = false;
+          } while(!isValid);
+          // desc
+          do {
+            isValid = true;
+            CLEAR;
+            puts(" === Add Recipe ===");
+            printf("Recipe name [1..25]: %s\n", name);
+            printf("Recipe desc [1..100]:\n");
+            scanf("%[^\n]", desc); getchar();
+            if(!(strlen(desc) >= 1 && strlen(name) <= 100)) isValid = false;
+          } while(!isValid);
+
+          // ingredients
+          Ingredient *tempIngredients = NULL;
+          do {
+            char ingredientName[255];
+            int ingredientQty, ingredientExp;
+            CLEAR;
+            puts(" === Add Recipe ===");
+            printf("Recipe name [1..25]: %s\n", name);
+            printf("Recipe desc [1..100]:\n%s\n", desc);
+            printf("Recipe ingredient [-1 to cancel|| -2 to finish]:\n");
+            do {
+              isValid = true;
+              printf("Ingredient name [1..25]: "); scanf("%s", ingredientName); getchar();
+              if(!(strlen(ingredientName) >= 1 && strlen(ingredientName) <= 25)) isValid = false;
+            } while(!isValid);
+            if(strcmp(ingredientName, "-1") == 0) {
+              Quit = true;
+              break;
+            } else if(strcmp(ingredientName, "-2") == 0) break;
+            printf("Ingredient Qty: "); scanf("%d", &ingredientQty); getchar();
+            if(ingredientQty == -1) {
+              Quit = true;
+              break;
+            } else if(ingredientQty == -2) break;
+            printf("Ingredient Exp day(s): "); scanf("%d", &ingredientExp); getchar();
+            if(ingredientExp == -1) {
+              Quit = true;
+              break;
+            } else if(ingredientExp == -2) break;
+            addIngredient(tempIngredients, newIngredient(ingredientName, ingredientQty, ingredientExp));
+            printf("Ingredient added to recipe!"); getchar();
+          } while(true);
+
+          Instruction *tempInstructions = NULL;
+          if(!Quit) {
+            do {
+              char instructionDesc[255];
+              CLEAR;
+              puts(" === Add Recipe ===");
+              printf("Recipe name [1..25]: %s\n", name);
+              printf("Recipe desc [1..100]:\n%s\n", desc);
+              printf("Recipe instructions [-1 to quit || -2 to finish]:\n");
+              scanf("%[^\n]", instructionDesc); getchar();
+              if(strcmp(instructionDesc, "-1") == 0) {
+                Quit = true;
+                break;
+              } else if(strcmp(instructionDesc, "-2") == 0) break;
+              addInstruction(tempInstructions, newInstruction(instructionDesc));
+              printf("Instruction added to the recipe!"); getchar();
+            } while(true);
+          }
+          if(!Quit) {
+            addRecipe(user->savedRecipes, newRecipe(name, desc));
+            addIngredient(user->savedRecipes->ingredients, tempIngredients);
+            addInstruction(user->savedRecipes->instructions, tempInstructions);
+            printf("Recipe added to user's recipe book!"); getchar();
+          }
+          fflush(stdin);
+        }
+        break;
         case 4:
           deletedRecipe = selectRecipe(user->savedRecipes);
           if(deletedRecipe) {

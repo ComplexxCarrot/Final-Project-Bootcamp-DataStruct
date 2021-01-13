@@ -9,7 +9,7 @@
 int main(){
   Recipe *recipes = NULL;
   User *users = NULL;
-
+  
   addUser(users, newUser("Chiko"));
   addRecipe(recipes, newRecipe("Ayam Goreng", "Ayam goreng kesukaan ipin"));
   addIngredient(recipes->ingredients, newIngredient("Ayam", 1, 2));
